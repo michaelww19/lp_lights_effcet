@@ -5,6 +5,7 @@ set -e
 
 # --- 配置 ---
 PORT="${PORT:-/dev/cu.usbmodem1101}"
+MPREMOTE="python3 -m mpremote"
 
 # --- 颜色输出 ---
 RED='\033[0;31m'
@@ -31,20 +32,20 @@ echo ""
 # 上传配置文件
 if [ -f "config.py" ]; then
     echo -e "${YELLOW}[1/2] 上传 config.py...${NC}"
-    mpremote connect "$PORT" cp config.py :config.py
+    $MPREMOTE connect "$PORT" cp config.py :config.py
 else
     echo -e "${YELLOW}[1/2] config.py 不存在，跳过${NC}"
 fi
 
 # 上传主程序
 echo -e "${YELLOW}[2/2] 上传 main.py...${NC}"
-mpremote connect "$PORT" cp main.py :main.py
+$MPREMOTE connect "$PORT" cp main.py :main.py
 
 # 软重启
 echo ""
 echo -e "${YELLOW}重启设备...${NC}"
-mpremote connect "$PORT" soft-reset
+$MPREMOTE connect "$PORT" soft-reset
 
 echo ""
 echo -e "${GREEN}上传完成！${NC}"
-echo "连接 REPL 查看输出: mpremote connect $PORT"
+echo "连接 REPL 查看输出: python3 -m mpremote connect $PORT"
