@@ -48,4 +48,6 @@ $MPREMOTE connect "$PORT" soft-reset
 
 echo ""
 echo -e "${GREEN}上传完成！${NC}"
-echo "连接 REPL 查看输出: python3 -m mpremote connect $PORT"
+echo -e "${YELLOW}连接 REPL...${NC}"
+echo ""
+exec $MPREMOTE connect "$PORT"

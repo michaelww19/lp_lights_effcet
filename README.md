@@ -26,6 +26,10 @@
 | MOSFET_PIN | 4 | AO3401 栅极 (Gate) |
 | LED_PIN | 5 | WS2812B 数据引脚 (DIN) |
 
+
+
+
+
 ## 灯效流程
 
 ```

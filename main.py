@@ -1,7 +1,6 @@
 import machine
 import neopixel
 import time
-import math
 
 # --- 加载配置 ---
 try:
@@ -38,6 +37,9 @@ def get_color(brightness):
 power_gate = machine.Pin(MOSFET_PIN, machine.Pin.OUT, value=1)
 radar = machine.Pin(RADAR_PIN, machine.Pin.IN)
 np = neopixel.NeoPixel(machine.Pin(LED_PIN), LED_COUNT)
+
+# --- 配置 GPIO 唤醒源（用于 light sleep 唤醒）---
+radar.irq(trigger=machine.Pin.IRQ_RISING, wake=machine.WAKE_LIGHT)
 
 def set_all_color(r, g, b):
     """设置所有灯珠颜色"""
@@ -83,26 +85,26 @@ def on_lights():
     power_gate.value(0)    # PMOS 导通
     time.sleep_ms(50)      # 等待电压稳定
 
-# --- 主循环 ---
-print("系统启动，等待上升沿触发...")
-
-last_state = radar.value()
+# --- 主循环（低功耗模式）---
+print("系统启动，进入低功耗睡眠模式...")
 
 try:
     while True:
-        current_state = radar.value()
+        # 进入 light sleep，等待 GPIO 高电平唤醒
+        machine.lightsleep()
 
-        # 检测上升沿（低→高）
-        if last_state == 0 and current_state == 1:
-            print("检测到上升沿！执行灯效...")
+        # 唤醒后检查引脚状态
+        if radar.value() == 1:
+            print("检测到高电平！执行灯效...")
             on_lights()
             progress_bar_effect()  # 进度条效果
-            breathing_once()           # 一次呼吸效果
-            off_lights()               # 关闭灯光
+            breathing_once()       # 呼吸效果
+            off_lights()           # 关闭灯光
             print("灯效完成，等待下一次触发...")
 
-        last_state = current_state
-        time.sleep_ms(20)# 短暂延时，避免CPU占用过高
+            # 等待引脚变低，避免重复触发
+            while radar.value() == 1:
+                machine.lightsleep(100)  # 每 100ms 检查一次
 
 except KeyboardInterrupt:
     print("程序停止")

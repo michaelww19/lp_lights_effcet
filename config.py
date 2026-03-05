@@ -4,7 +4,7 @@ MOSFET_PIN = 4       # AO3401 PMOS 的栅极 (Gate)
 LED_PIN = 5          # WS2812B 的数据引脚 (DIN)
 
 # --- LED 配置 ---
-LED_COUNT = 16       # 灯珠数量，根据实际修改
+LED_COUNT = 29       # 灯珠数量，根据实际修改
 
 # --- 颜色配置 ---
 # 可选: "warm" (暖白), "cold" (冷白), "custom" (自定义)
