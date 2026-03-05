@@ -88,7 +88,3 @@ LogoLights/
 ├── ESP32_GENERIC_C3-20251209-v1.27.0.bin # MicroPython 固件
 └── README.md                            # 项目说明
 ```
-
-## License
-
-MIT
