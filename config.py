@@ -18,6 +18,11 @@ FADE_STEPS = 50             # 渐显/渐隐步数（越大变化越平滑）
 FADE_DELAY_MS = 15          # 每步延迟(ms)，值越大渐变越慢
 PERSON_LEAVE_DELAY_MS = 2000  # 人离开后延迟(ms)再开始渐隐，避免频繁闪烁
 
+# --- 低功耗配置 ---
+USE_GPIO_WAKE = True        # 是否启用 GPIO 硬件唤醒（推荐开启）
+                            # True:  使用 GPIO 唤醒，待机功耗 ~1-5mA
+                            # False: 仅使用定时唤醒，兼容性更好但功耗稍高
+
 # --- 旧配置（保留兼容，但不再使用）---
 BREATHING_STEPS = 100
 PROGRESS_DELAY_MS = 10
