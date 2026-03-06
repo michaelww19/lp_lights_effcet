@@ -13,7 +13,12 @@ COLOR_MODE = "cold"
 # 自定义颜色 (R, G, B)，仅当 COLOR_MODE = "custom" 时生效
 CUSTOM_COLOR = (255, 100, 50)
 
-# --- 效果配置 ---
-BREATHING_STEPS = 100      # 呼吸效果步数（越大越慢）
-PROGRESS_DELAY_MS = 10     # 进度条每灯延迟(ms)
-BREATHING_DELAY_MS = 10    # 呼吸效果每步延迟(ms)
+# --- 渐变效果配置 ---
+FADE_STEPS = 50             # 渐显/渐隐步数（越大变化越平滑）
+FADE_DELAY_MS = 15          # 每步延迟(ms)，值越大渐变越慢
+PERSON_LEAVE_DELAY_MS = 2000  # 人离开后延迟(ms)再开始渐隐，避免频繁闪烁
+
+# --- 旧配置（保留兼容，但不再使用）---
+BREATHING_STEPS = 100
+PROGRESS_DELAY_MS = 10
+BREATHING_DELAY_MS = 10
