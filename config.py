@@ -23,6 +23,11 @@ USE_GPIO_WAKE = True        # 是否启用 GPIO 硬件唤醒（推荐开启）
                             # True:  使用 GPIO 唤醒，待机功耗 ~1-5mA
                             # False: 仅使用定时唤醒，兼容性更好但功耗稍高
 
+HOLD_GPIO_STATE = True      # 是否在 sleep 期间保持 GPIO 状态
+                            # 坑点修复：ESP32 sleep 时 GPIO 可能变为高阻态
+                            # 开启后使用 hold 功能保持 PMOS 控制引脚状态
+                            # 防止灯带在 sleep 期间意外亮/灭
+
 # --- 旧配置（保留兼容，但不再使用）---
 BREATHING_STEPS = 100
 PROGRESS_DELAY_MS = 10
