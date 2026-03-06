@@ -39,7 +39,20 @@ radar = machine.Pin(RADAR_PIN, machine.Pin.IN)
 np = neopixel.NeoPixel(machine.Pin(LED_PIN), LED_COUNT)
 
 # --- 配置 GPIO 唤醒源（用于 light sleep 唤醒）---
-radar.irq(trigger=machine.Pin.IRQ_RISING, wake=machine.WAKE_LIGHT)
+# 注意：ESP32-C3 的 GPIO 唤醒可能需要特殊配置
+# 使用定时唤醒 + 检测引脚状态的方式作为备选方案
+USE_GPIO_WAKE = False  # 暂时禁用 GPIO 唤醒，使用定时唤醒
+
+if USE_GPIO_WAKE:
+    try:
+        wake_mode = getattr(machine, 'WAKE_LIGHT', None)
+        if wake_mode is None:
+            wake_mode = getattr(machine, 'PIN_WAKE', 4)
+        radar.irq(trigger=machine.Pin.IRQ_RISING, wake=wake_mode)
+        print(f"GPIO 唤醒配置成功 (wake={wake_mode})")
+    except Exception as e:
+        print(f"GPIO 唤醒配置失败: {e}")
+        USE_GPIO_WAKE = False
 
 def set_all_color(r, g, b):
     """设置所有灯珠颜色"""
@@ -87,13 +100,11 @@ def on_lights():
 
 # --- 主循环（低功耗模式）---
 print("系统启动，进入低功耗睡眠模式...")
+print(f"RADAR_PIN={RADAR_PIN}, 当前状态={radar.value()}")
 
 try:
     while True:
-        # 进入 light sleep，等待 GPIO 高电平唤醒
-        machine.lightsleep()
-
-        # 唤醒后检查引脚状态
+        # 如果引脚已经是高电平，先执行灯效
         if radar.value() == 1:
             print("检测到高电平！执行灯效...")
             on_lights()
@@ -103,8 +114,21 @@ try:
             print("灯效完成，等待下一次触发...")
 
             # 等待引脚变低，避免重复触发
+            print("等待引脚变低...")
             while radar.value() == 1:
                 machine.lightsleep(100)  # 每 100ms 检查一次
+            print("引脚已变低")
+
+        # 进入睡眠
+        if USE_GPIO_WAKE:
+            # GPIO 唤醒模式：无限睡眠
+            print("进入睡眠，等待 GPIO 唤醒...")
+            machine.lightsleep()
+        else:
+            # 定时唤醒模式：每 100ms 检查一次
+            machine.lightsleep(100)
+
+        print(f"唤醒！引脚状态={radar.value()}")
 
 except KeyboardInterrupt:
     print("程序停止")
